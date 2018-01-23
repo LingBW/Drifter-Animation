@@ -10,7 +10,35 @@ import pandas as pd
 from matplotlib import animation
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
-from track_functions import draw_basemap
+from mpl_toolkits.basemap import Basemap
+
+def draw_basemap(ax, points, interval_lon=1, interval_lat=1):
+    '''
+    draw the basemap?
+    '''
+    
+    lons = points['lons']
+    lats = points['lats']
+    size = max((max(lons)-min(lons)),(max(lats)-min(lats)))/10
+    map_lon = [min(lons)-size,max(lons)+size]
+    map_lat = [min(lats)-size,max(lats)+size]
+    
+    #ax = fig.sca(ax)
+    dmap = Basemap(projection='cyl',
+                   llcrnrlat=map_lat[0], llcrnrlon=map_lon[0],
+                   urcrnrlat=map_lat[1], urcrnrlon=map_lon[1],
+                   resolution='h',ax=ax)# resolution: c,l,i,h,f.
+    dmap.drawparallels(np.arange(int(map_lat[0])-1,
+                                 int(map_lat[1])+1,interval_lat),
+                       labels=[1,0,0,0])
+    dmap.drawmeridians(np.arange(int(map_lon[0])-1,
+                                 int(map_lon[1])+1,interval_lon),
+                       labels=[0,0,0,1])
+    dmap.drawcoastlines()
+    dmap.fillcontinents(color='grey')
+    dmap.drawmapboundary()
+    dmap.etopo()
+
 
 #filename = 'drift_gomi_2015_1.dat'
 #filename = 'drift_wbws_2015_1.dat'
